@@ -54,7 +54,7 @@ namespace com.erinus.ESServer
 
             app.UseSession(new ESSessionOptions
             {
-                Store = ESSessionOptions.StoreType.Memory
+                Store = ESSessionOptions.StoreType.MongoDB
             });
 
             app.UseWebApi(config);

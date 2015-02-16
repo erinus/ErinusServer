@@ -18,20 +18,20 @@ namespace com.erinus.ESServer.Controller
         [HttpGet]
         public HttpResponseMessage help()
         {
-            //ESSession session = this.Session(Request.GetOwinContext());
+            ESSession session = this.Session(Request.GetOwinContext());
 
-            //if (session.Has("test"))
-            //{
-            //    Console.WriteLine("Get: " + session.Get<String>("test"));
-            //}
+            if (session.Has("test"))
+            {
+                Console.WriteLine("Get: " + session.Get<String>("test"));
+            }
 
-            //Console.WriteLine("test");
+            Console.WriteLine("test");
 
-            //if (!session.Has("test"))
-            //{
-            //    Console.WriteLine("Set");
-            //    session.Set("test", "123");
-            //}
+            if (!session.Has("test"))
+            {
+                Console.WriteLine("Set");
+                session.Set("test", "123");
+            }
 
             //String html = File.ReadAllText("test.htm.tpl");
 
