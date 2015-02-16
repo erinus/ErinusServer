@@ -15,7 +15,7 @@ namespace com.erinus.ESServer
         {
             using (WebApp.Start<ESRouter>("http://+:11111"))
             {
-                Console.WriteLine(String.Format("ErinusServer {0}-{1}", "1.0.0.0", "<#= DateTime.Now.ToLocalTime().ToString("yyyyMMdd ") #>"));
+                Console.WriteLine(String.Format("ErinusServer {0}-{1}", "1.0.0.0", "<#= DateTime.Now.ToLocalTime().ToString("yyyyMMdd") #>"));
 
                 while (Console.ReadKey(true).Key != ConsoleKey.Escape)
                 {
