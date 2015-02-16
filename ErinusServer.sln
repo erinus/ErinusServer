@@ -18,6 +18,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESServer.Controller", "ESSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESServer.Session.Store", "ESServer.Session.Store\ESServer.Session.Store.csproj", "{36FD1A70-0355-4F82-970B-9D945AAB733B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESServer.Session.Store.Redis", "ESServer.Session.Store.Redis\ESServer.Session.Store.Redis.csproj", "{156F6479-431B-4C14-8B51-A01BA95CD443}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESServer.Session.Store.Memcache", "ESServer.Session.Store.Memcache\ESServer.Session.Store.Memcache.csproj", "{156F6479-431B-4C14-8B51-A01BA9551400}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +52,14 @@ Global
 		{36FD1A70-0355-4F82-970B-9D945AAB733B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36FD1A70-0355-4F82-970B-9D945AAB733B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36FD1A70-0355-4F82-970B-9D945AAB733B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{156F6479-431B-4C14-8B51-A01BA95CD443}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{156F6479-431B-4C14-8B51-A01BA95CD443}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{156F6479-431B-4C14-8B51-A01BA95CD443}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{156F6479-431B-4C14-8B51-A01BA95CD443}.Release|Any CPU.Build.0 = Release|Any CPU
+		{156F6479-431B-4C14-8B51-A01BA9551400}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{156F6479-431B-4C14-8B51-A01BA9551400}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{156F6479-431B-4C14-8B51-A01BA9551400}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{156F6479-431B-4C14-8B51-A01BA9551400}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
