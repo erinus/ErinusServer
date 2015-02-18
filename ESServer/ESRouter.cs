@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Net;
 using System.Web.Http;
 using System.Web.Http.Dispatcher;
 
 using Owin;
 
-using Microsoft.AspNet.Identity;
 using Microsoft.Owin;
-using Microsoft.Owin.Diagnostics;
 using Microsoft.Owin.FileSystems;
-using Microsoft.Owin.Security;
-using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.StaticFiles;
 using Microsoft.Owin.StaticFiles.ContentTypes;
 
@@ -27,6 +21,8 @@ namespace com.erinus.ESServer
             listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
 
             HttpConfiguration config = new HttpConfiguration();
+
+            config.IncludeErrorDetailPolicy = IncludeErrorDetailPolicy.Never;
 
             config.MapHttpAttributeRoutes();
 
