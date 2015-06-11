@@ -1,3 +1,5 @@
 ErinusServer
 
-Add Session Support with In-Memor(Done), MongoDB(80% Done), Redis(Planned), Memcache(Planned)
+.NET OWIN Architecture
+
+Add Session Support In-Memory(Done), MongoDB(80% Done), Redis(Planned), Memcache(Planned)
