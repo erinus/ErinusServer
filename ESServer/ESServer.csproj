@@ -127,7 +127,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controller\HelpController.cs" />
+    <Compile Include="Controller\IndexController.cs" />
     <Compile Include="ESAssembliesResolver.cs" />
     <Compile Include="ESMiddleware.cs" />
     <Compile Include="ESRazorEngine.cs" />

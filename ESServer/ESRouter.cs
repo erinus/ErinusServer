@@ -28,7 +28,7 @@ namespace com.erinus.ESServer
 
             config.Services.Replace(typeof(IAssembliesResolver), new ESAssembliesResolver());
 
-            DirectoryInfo dire = new DirectoryInfo(@".\websites");
+            DirectoryInfo dire = new DirectoryInfo(@".\web");
 
             if (dire.Exists)
             {
@@ -36,21 +36,21 @@ namespace com.erinus.ESServer
 
                 provider.Mappings.Add(".iso", "application/iso");
 
-                StaticFileOptions option = new StaticFileOptions
+                app.UseStaticFiles(new StaticFileOptions
                 {
                     FileSystem = new PhysicalFileSystem(dire.FullName),
-                    RequestPath = new PathString("/web"),
-                    ContentTypeProvider = provider
-                };
 
-                app.UseStaticFiles(option);
+                    RequestPath = new PathString("/web"),
+
+                    ContentTypeProvider = provider
+                });
             }
 
             app.Use<ESMiddleware>();
 
             app.UseSession(new ESSessionOptions
             {
-                Store = ESSessionOptions.StoreType.MongoDB
+                Store = ESSessionOptions.StoreType.Redis
             });
 
             app.UseWebApi(config);

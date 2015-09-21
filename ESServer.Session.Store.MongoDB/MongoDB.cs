@@ -11,19 +11,25 @@ namespace com.erinus.ESServer.Session.Store
         public class Session : ISession
         {
             public DateTime Time;
+
             public String Key;
+
             public Dictionary<String, dynamic> Values;
 
             private MongoServer Server;
+
             private MongoDatabase Database;
 
             public Session(MongoServer server, MongoDatabase database, String sessionKey)
             {
                 this.Time = DateTime.Now.ToLocalTime();
+
                 this.Key = sessionKey;
+
                 this.Values = new Dictionary<String, dynamic>();
 
                 this.Server = server;
+
                 this.Database = database;
             }
 
@@ -51,6 +57,7 @@ namespace com.erinus.ESServer.Session.Store
                     MongoCollection<LazyBsonDocument> sessions = this.Database.GetCollection<LazyBsonDocument>("sessions");
 
                     sessions.Update(
+
                         new QueryDocument
                         {
                             {
@@ -71,6 +78,7 @@ namespace com.erinus.ESServer.Session.Store
                                 }
                             }
                         }
+
                     );
 
                     this.Values[key] = value;
@@ -81,7 +89,9 @@ namespace com.erinus.ESServer.Session.Store
         }
 
         private MongoClient mongoClient;
+
         private MongoServer mongoServer;
+
         private MongoDatabase mongoDatabase;
 
         public MongoDB()
@@ -95,11 +105,7 @@ namespace com.erinus.ESServer.Session.Store
             if (this.mongoServer.State == MongoServerState.Connected)
             {
                 this.mongoDatabase = this.mongoServer.GetDatabase("esserver");
-
-                Console.WriteLine("mongo start success");
             }
-
-            Console.WriteLine("mongo start end");
         }
 
         ~MongoDB()
@@ -117,6 +123,7 @@ namespace com.erinus.ESServer.Session.Store
                 MongoCollection<LazyBsonDocument> sessions = this.mongoDatabase.GetCollection<LazyBsonDocument>("sessions");
 
                 sessions.Update(
+
                     new QueryDocument
                     {
                         {
@@ -152,6 +159,7 @@ namespace com.erinus.ESServer.Session.Store
                     {
                         Flags = UpdateFlags.Upsert
                     }
+
                 );
 
                 Session session = new Session(this.mongoServer, this.mongoDatabase, sessionKey);
@@ -167,6 +175,7 @@ namespace com.erinus.ESServer.Session.Store
                 MongoCollection<LazyBsonDocument> sessions = this.mongoDatabase.GetCollection<LazyBsonDocument>("sessions");
 
                 LazyBsonDocument session = sessions.FindOne(
+
                     new QueryDocument
                     {
                         {
@@ -174,6 +183,7 @@ namespace com.erinus.ESServer.Session.Store
                             sessionKey
                         }
                     }
+
                 );
 
                 return session != null;
@@ -187,6 +197,7 @@ namespace com.erinus.ESServer.Session.Store
                 MongoCollection<LazyBsonDocument> sessions = this.mongoDatabase.GetCollection<LazyBsonDocument>("sessions");
 
                 LazyBsonDocument document = sessions.FindOne(
+
                     new QueryDocument
                     {
                         {
@@ -194,6 +205,7 @@ namespace com.erinus.ESServer.Session.Store
                             sessionKey
                         }
                     }
+
                 );
 
                 Session session = new Session(this.mongoServer, this.mongoDatabase, sessionKey);

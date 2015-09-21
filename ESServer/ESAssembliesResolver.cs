@@ -14,15 +14,18 @@ namespace com.erinus.ESServer
         {
             List<Assembly> result = new List<Assembly>(base.GetAssemblies());
 
-            DirectoryInfo dire = new DirectoryInfo(@".\controllers");
+            DirectoryInfo dire = new DirectoryInfo(@".");
 
             if (dire.Exists)
             {
                 foreach (FileInfo file in dire.GetFiles("*.dll"))
                 {
-                    Assembly assembly = Assembly.Load(File.ReadAllBytes(file.FullName));
+                    if (file.Name.StartsWith("ESServer.Controller."))
+                    {
+                        Assembly assembly = Assembly.Load(File.ReadAllBytes(file.FullName));
 
-                    result.Add(assembly);
+                        result.Add(assembly);
+                    }
                 }
             }
 

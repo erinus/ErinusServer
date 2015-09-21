@@ -33,26 +33,60 @@ namespace com.erinus.ESServer
             switch (options.Store)
             {
                 case ESSessionOptions.StoreType.Memory:
+
                     path = String.Format(@"{0}\ESServer.Session.Store.Memory.dll", path);
+
                     if (!File.Exists(path))
                     {
                         Console.WriteLine("[FAILURE] ESServer.Session.Store.Memory.dll was not found. Session.Store.Memory disabled.");
+
                         break;
                     }
+
                     assembly = Assembly.LoadFile(path);
+
                     sessions = (ISessionStore)Activator.CreateInstance(assembly.GetType("com.erinus.ESServer.Session.Store.Memory"));
+
                     Console.WriteLine("[SUCCESS] Session.Store.Memory enabled.");
+
                     break;
+
                 case ESSessionOptions.StoreType.MongoDB:
+
                     path = String.Format(@"{0}\ESServer.Session.Store.MongoDB.dll", path);
+
                     if (!File.Exists(path))
                     {
                         Console.WriteLine("[FAILURE] ESServer.Session.Store.MongoDB.dll was not found. Session.Store.MongoDB disabled.");
+
                         break;
                     }
+
                     assembly = Assembly.LoadFile(path);
+
                     sessions = (ISessionStore)Activator.CreateInstance(assembly.GetType("com.erinus.ESServer.Session.Store.MongoDB"));
+
                     Console.WriteLine("[SUCCESS] Session.Store.MongoDB enabled.");
+
+                    break;
+
+                case ESSessionOptions.StoreType.Redis:
+
+                    path = String.Format(@"{0}\ESServer.Session.Store.Redis.dll", path);
+
+                    if (!File.Exists(path))
+                    {
+                        Console.WriteLine("[FAILURE] ESServer.Session.Store.Redis.dll was not found. Session.Store.Redis disabled.");
+
+                        break;
+                    }
+
+                    assembly = Assembly.LoadFile(path);
+
+                    sessions = (ISessionStore)Activator.CreateInstance(assembly.GetType("com.erinus.ESServer.Session.Store.Redis"));
+
+                    Console.WriteLine("[SUCCESS] Session.Store.Redis enabled.");
+
                     break;
             }
         }

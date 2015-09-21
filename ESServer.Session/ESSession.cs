@@ -8,30 +8,30 @@ namespace com.erinus.ESServer
 {
     public class ESSession
     {
-        public readonly String sessionKey;
+        public readonly String Key;
 
-        public ESSession(String sessionKey)
+        public ESSession(String key)
         {
-            this.sessionKey = sessionKey;
+            this.Key = key;
 
-            if (!ESSessionMiddleware.sessions.Has(sessionKey))
+            if (!ESSessionMiddleware.sessions.Has(key))
             {
-                ESSessionMiddleware.sessions.Add(sessionKey);
+                ESSessionMiddleware.sessions.Add(key);
             }
         }
 
         public Boolean Has(String key)
         {
-            return ESSessionMiddleware.sessions.Get(sessionKey).Has(key);
+            return ESSessionMiddleware.sessions.Get(this.Key).Has(key);
         }
 
         public T Get<T>(String key) where T : class
         {
             T value = null;
 
-            if (ESSessionMiddleware.sessions.Get(sessionKey).Has(key))
+            if (ESSessionMiddleware.sessions.Get(this.Key).Has(key))
             {
-                value = ESSessionMiddleware.sessions.Get(sessionKey).Get<T>(key);
+                value = ESSessionMiddleware.sessions.Get(this.Key).Get<T>(key);
             }
 
             return value;
@@ -39,7 +39,7 @@ namespace com.erinus.ESServer
 
         public void Set(String key, dynamic value)
         {
-            ESSessionMiddleware.sessions.Get(sessionKey).Set(key, value);
+            ESSessionMiddleware.sessions.Get(this.Key).Set(key, value);
         }
 
         public static async Task<ESSession> Parse(IDictionary<String, Object> owinEnvironment)

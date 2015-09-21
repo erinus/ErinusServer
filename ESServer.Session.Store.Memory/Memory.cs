@@ -8,13 +8,17 @@ namespace com.erinus.ESServer.Session.Store
         public class Session : ISession
         {
             public DateTime Time;
+
             public String Key;
+
             public Dictionary<String, dynamic> Values;
 
             public Session(String sessionKey)
             {
                 this.Time = DateTime.Now.ToLocalTime();
+
                 this.Key = sessionKey;
+
                 this.Values = new Dictionary<String, dynamic>();
             }
 
