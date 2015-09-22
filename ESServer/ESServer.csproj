@@ -146,6 +146,7 @@
   <ItemGroup>
     <Compile Include="Controller\TestController.cs" />
     <Compile Include="ESAssembliesResolver.cs" />
+    <Compile Include="ESMediaTypeFormatter.cs" />
     <Compile Include="ESMiddleware.cs" />
     <Compile Include="ESRazorEngine.cs" />
     <Compile Include="ESRouter.cs" />
