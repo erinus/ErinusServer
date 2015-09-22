@@ -5,7 +5,7 @@ SET DIRE=%~dp0
 
 CD "%DIRE%"
 
-openssl.exe -config openssl.cfg req -x509 -newkey rsa:2048 -out CAServer.pem -outform PEM -days 365
+openssl.exe req -x509 -newkey rsa:2048 -out CAServer.pem -outform PEM -days 365
 
 openssl.exe x509 -in CAServer.pem -out CAServer.crt
 
