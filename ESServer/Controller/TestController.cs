@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -12,55 +13,81 @@ using System.Web.Http;
 namespace com.erinus.ESServer.Controller
 {
     public class TestController : ESController
-    {
-        #region
-        [Route("test")]
-        [HttpGet]
-        public HttpResponseMessage test()
-        {
-            try
-            {
-                ESSession session = this.Session(Request.GetOwinContext());
+	{
+		#region
+		[Route("test")]
+		[HttpGet]
+		public HttpResponseMessage test()
+		{
+			//String html = File.ReadAllText("test.htm.tpl");
 
-                if (session.Has("test"))
-                {
-                    Console.WriteLine("Session has [test] = " + session.Get<String>("test"));
-                }
-                else
-                {
-                    Console.WriteLine("Session has no key [test]");
-                }
+			//ESRazorEngine.Set("test", html);
 
-                if (!session.Has("test"))
-                {
-                    Console.WriteLine("Session set [test] = 123");
+			//html = ESRazorEngine.Get("test", new { UserName = name });
 
-                    session.Set("test", "123");
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
+			//HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK);
 
-                Console.WriteLine(e.StackTrace);
-            }
+			//response.Content = new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes(html)));
 
-            //String html = File.ReadAllText("test.htm.tpl");
+			//response.Content = new StreamContent(new FileStream("test.htm.tpl", FileMode.Open));
 
-            //ESRazorEngine.Set("test", html);
+			//return response;
 
-            //html = ESRazorEngine.Get("test", new { UserName = name });
+			return Request.CreateResponse(HttpStatusCode.OK);
+		}
+		#endregion
 
-            //HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK);
+		#region
+		[Route("test/session/{key}")]
+		[HttpGet]
+		public HttpResponseMessage test_session(String key)
+		{
+			try
+			{
+				ESSession session = this.Session(Request.GetOwinContext());
 
-            //response.Content = new StreamContent(new MemoryStream(Encoding.UTF8.GetBytes(html)));
+				if (session.Has(key))
+				{
+					return Request.CreateResponse(HttpStatusCode.OK, new { val = session.Get<String>(key) }, "application/json");
+				}
+				else
+				{
+					return Request.CreateResponse(HttpStatusCode.OK, new { val = "none" }, "application/json");
+				}
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
 
-            //response.Content = new StreamContent(new FileStream("test.htm.tpl", FileMode.Open));
+				Console.WriteLine(e.StackTrace);
 
-            //return response;
+				return Request.CreateResponse(HttpStatusCode.InternalServerError, new { message = e.Message, stacktrace = e.StackTrace }, "application/json");
+			}
+		}
+		#endregion
 
-            return Request.CreateResponse(HttpStatusCode.OK, new { name = "ErinusServer", code = "1.0.0.0" }, "application/json");
-        }
-        #endregion
+		#region
+		[Route("test/session/{key}/{val}")]
+		[HttpGet]
+		public HttpResponseMessage test_session(String key, String val)
+		{
+			try
+			{
+				ESSession session = this.Session(Request.GetOwinContext());
+
+				session.Set(key, val);
+
+				return Request.CreateResponse(HttpStatusCode.OK, new { key = key, val = val }, "application/json");
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+
+				Console.WriteLine(e.StackTrace);
+
+				return Request.CreateResponse(HttpStatusCode.InternalServerError, new { message = e.Message, stacktrace = e.StackTrace }, "application/json");
+			}
+		}
+		#endregion
     }
 }

@@ -50,7 +50,7 @@ namespace com.erinus.ESServer
 
             app.UseSession(new ESSessionOptions
             {
-                Store = ESSessionOptions.StoreType.Redis
+                Store = ESSessionOptions.StoreType.Memory
             });
 
             app.UseWebApi(config);
