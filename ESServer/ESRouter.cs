@@ -50,7 +50,7 @@ namespace com.erinus.ESServer
 
             app.UseSession(new ESSessionOptions
             {
-                Store = ESSessionOptions.StoreType.Memcached
+                Store = ESSessionOptions.StoreType.Redis
             });
 
             app.UseWebApi(config);

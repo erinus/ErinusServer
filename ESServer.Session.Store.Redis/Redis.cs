@@ -21,7 +21,6 @@ namespace com.erinus.ESServer.Session.Store
             public Dictionary<String, dynamic> Values;
         }
 
-
         public class Session : ISession
         {
             public DateTime Time;

@@ -32,25 +32,6 @@ namespace com.erinus.ESServer
 
             switch (options.Store)
             {
-                case ESSessionOptions.StoreType.Memcached:
-
-                    path = String.Format(@"{0}\ESServer.Session.Store.Memcached.dll", path);
-
-                    if (!File.Exists(path))
-                    {
-                        Console.WriteLine("[FAILURE] ESServer.Session.Store.Memcached.dll was not found. Session.Store.Memcached disabled.");
-
-                        break;
-                    }
-
-                    assembly = Assembly.LoadFile(path);
-
-                    sessions = (ISessionStore)Activator.CreateInstance(assembly.GetType("com.erinus.ESServer.Session.Store.Memcached"));
-
-                    Console.WriteLine("[SUCCESS] Session.Store.Memcached enabled.");
-
-                    break;
-
                 case ESSessionOptions.StoreType.Memory:
 
                     path = String.Format(@"{0}\ESServer.Session.Store.Memory.dll", path);

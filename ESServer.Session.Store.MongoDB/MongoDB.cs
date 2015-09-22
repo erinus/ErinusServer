@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -16,11 +17,11 @@ namespace com.erinus.ESServer.Session.Store
 
             public Dictionary<String, dynamic> Values;
 
-            private MongoServer Server;
+            private IMongoClient Client;
 
-            private MongoDatabase Database;
+            private IMongoDatabase Database;
 
-            public Session(MongoServer server, MongoDatabase database, String sessionKey)
+            public Session(IMongoClient client, IMongoDatabase database, String sessionKey)
             {
                 this.Time = DateTime.Now.ToLocalTime();
 
@@ -28,7 +29,7 @@ namespace com.erinus.ESServer.Session.Store
 
                 this.Values = new Dictionary<String, dynamic>();
 
-                this.Server = server;
+                this.Client = client;
 
                 this.Database = database;
             }
@@ -52,83 +53,15 @@ namespace com.erinus.ESServer.Session.Store
 
             public Boolean Set(String key, dynamic value)
             {
-                using (this.Server.RequestStart(this.Database))
-                {
-                    MongoCollection<LazyBsonDocument> sessions = this.Database.GetCollection<LazyBsonDocument>("sessions");
+                IMongoCollection<BsonDocument> sessions = this.Database.GetCollection<BsonDocument>("sessions");
 
-                    sessions.Update(
-
-                        new QueryDocument
-                        {
-                            {
-                                "Key",
-                                this.Key
-                            }
-                        },
-                        new UpdateDocument
-                        {
-                            {
-                                "$set",
-                                new BsonDocument
-                                {
-                                    {
-                                        "Values." + key,
-                                        value
-                                    }
-                                }
-                            }
-                        }
-
-                    );
-
-                    this.Values[key] = value;
-
-                    return true;
-                }
-            }
-        }
-
-        private MongoClient mongoClient;
-
-        private MongoServer mongoServer;
-
-        private MongoDatabase mongoDatabase;
-
-        public MongoDB()
-        {
-            this.mongoClient = new MongoClient("mongodb://localhost:27017");
-
-            this.mongoServer = mongoClient.GetServer();
-
-            this.mongoServer.Connect();
-
-            if (this.mongoServer.State == MongoServerState.Connected)
-            {
-                this.mongoDatabase = this.mongoServer.GetDatabase("esserver");
-            }
-        }
-
-        ~MongoDB()
-        {
-            if (this.mongoServer != null)
-            {
-                this.mongoServer.Disconnect();
-            }
-        }
-
-        public ISession Add(String sessionKey)
-        {
-            using (this.mongoServer.RequestStart(this.mongoDatabase))
-            {
-                MongoCollection<LazyBsonDocument> sessions = this.mongoDatabase.GetCollection<LazyBsonDocument>("sessions");
-
-                sessions.Update(
+                sessions.UpdateOneAsync(
 
                     new QueryDocument
                     {
                         {
                             "Key",
-                            sessionKey
+                            this.Key
                         }
                     },
                     new UpdateDocument
@@ -138,87 +71,144 @@ namespace com.erinus.ESServer.Session.Store
                             new BsonDocument
                             {
                                 {
-                                    "Time",
-                                    DateTime.Now.ToLocalTime()
-                                },
-                                {
-                                    "Key",
-                                    sessionKey
-                                },
-                                {
-                                    "Values",
-                                    new BsonDocument
-                                    {
-
-                                    }
+                                    "Values." + key,
+                                    value
                                 }
                             }
                         }
-                    },
-                    new MongoUpdateOptions
-                    {
-                        Flags = UpdateFlags.Upsert
                     }
 
                 );
 
-                Session session = new Session(this.mongoServer, this.mongoDatabase, sessionKey);
+                this.Values[key] = value;
 
-                return session;
+                return true;
             }
+        }
+
+        private IMongoClient mongoClient;
+
+        private IMongoDatabase mongoDatabase;
+
+        public MongoDB()
+        {
+            this.mongoClient = new MongoClient("mongodb://localhost:27017");
+
+            this.mongoDatabase = this.mongoClient.GetDatabase("esserver");
+        }
+
+        ~MongoDB()
+        {
+            
+        }
+
+        public ISession Add(String sessionKey)
+        {
+            IMongoCollection<BsonDocument> sessions = this.mongoDatabase.GetCollection<BsonDocument>("sessions");
+
+            sessions.UpdateOneAsync(
+
+                new QueryDocument
+                {
+                    {
+                        "Key",
+                        sessionKey
+                    }
+                },
+                new UpdateDocument
+                {
+                    {
+                        "$set",
+                        new BsonDocument
+                        {
+                            {
+                                "Time",
+                                DateTime.Now.ToLocalTime()
+                            },
+                            {
+                                "Key",
+                                sessionKey
+                            },
+                            {
+                                "Values",
+                                new BsonDocument
+                                {
+
+                                }
+                            }
+                        }
+                    }
+                },
+                new UpdateOptions
+                {
+                    IsUpsert = true
+                }
+
+            );
+
+            Session session = new Session(this.mongoClient, this.mongoDatabase, sessionKey);
+
+            return session;
         }
 
         public Boolean Has(String sessionKey)
         {
-            using (this.mongoServer.RequestStart(this.mongoDatabase))
-            {
-                MongoCollection<LazyBsonDocument> sessions = this.mongoDatabase.GetCollection<LazyBsonDocument>("sessions");
+            IMongoCollection<BsonDocument> sessions = this.mongoDatabase.GetCollection<BsonDocument>("sessions");
 
-                LazyBsonDocument session = sessions.FindOne(
+            QueryDocument query = new QueryDocument {
 
-                    new QueryDocument
-                    {
-                        {
-                            "Key",
-                            sessionKey
-                        }
-                    }
+                { "Key", sessionKey }
 
-                );
+            };
 
-                return session != null;
-            }
+            Task<IAsyncCursor<BsonDocument>> search = sessions.FindAsync<BsonDocument>(query);
+
+            IAsyncCursor<BsonDocument> cursor = search.Result;
+
+            Task<List<BsonDocument>> next = cursor.ToListAsync<BsonDocument>();
+
+            return next.Result.Count != 0;
         }
 
         public ISession Get(String sessionKey)
         {
-            using (this.mongoServer.RequestStart(this.mongoDatabase))
+            IMongoCollection<BsonDocument> sessions = this.mongoDatabase.GetCollection<BsonDocument>("sessions");
+
+            QueryDocument query = new QueryDocument {
+
+                { "Key", sessionKey }
+
+            };
+
+            Task<IAsyncCursor<BsonDocument>> search = sessions.FindAsync<BsonDocument>(query);
+
+            IAsyncCursor<BsonDocument> cursor = search.Result;
+
+            Task<bool> next = cursor.MoveNextAsync();
+
+            if (!next.Result)
             {
-                MongoCollection<LazyBsonDocument> sessions = this.mongoDatabase.GetCollection<LazyBsonDocument>("sessions");
-
-                LazyBsonDocument document = sessions.FindOne(
-
-                    new QueryDocument
-                    {
-                        {
-                            "Key",
-                            sessionKey
-                        }
-                    }
-
-                );
-
-                Session session = new Session(this.mongoServer, this.mongoDatabase, sessionKey);
-
-                BsonDocument values = document.GetValue("Values").AsBsonDocument;
-
-                foreach (String name in values.Names)
-                {
-                    session.Values.Add(name, values.GetValue(name).AsString);
-                }
-
-                return session;
+                return null;
             }
+
+            Session session = new Session(this.mongoClient, this.mongoDatabase, sessionKey);
+
+            IEnumerable<BsonDocument> batch = cursor.Current;
+
+            IEnumerator<BsonDocument> documents = batch.GetEnumerator();
+
+            documents.MoveNext();
+
+            BsonDocument document = documents.Current;
+
+            BsonDocument values = document.GetValue("Values").AsBsonDocument;
+
+            foreach (String name in values.Names)
+            {
+                session.Values.Add(name, values.GetValue(name).AsString);
+            }
+
+            return session;
         }
     }
 }
